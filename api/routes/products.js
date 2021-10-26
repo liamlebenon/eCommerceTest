@@ -1,46 +1,42 @@
 const express = require('express');
+const { pool, query } = require('../../db');
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-    res.status(200).json({
-        message: 'Handling GET requests to /products'
+router.get('/', (req, res) => {
+    pool.query('SELECT * FROM products ORDER BY id ASC', (error, results) => {
+        if(error) {
+            res.send(error.message);
+        }
+        res.status(200).json(results.rows);
+    })
+});
+
+router.post('/', (req, res) => {
+    const { name, description, seller, quantity, price } = req.body;
+    pool.query('INSERT INTO products (name, description, seller, quantity, price) VALUES ($1, $2, $3, $4, $5)', 
+            [ name, description, seller, quantity, price ], 
+            (error, results) => {
+        if(error) {
+            res.send(error.message);
+        }
+        res.status(201).json(results.rows);
+    })
+})
+
+
+//Get a specific product by ID
+router.get('/:productId', (req, res) => {
+    const productId = parseInt(req.params.productId);
+    pool.query('SELECT * FROM products WHERE id = $1', 
+            [productId], 
+            (error, results) => {
+        if(error) {
+            res.send(error.message);
+        }
+        res.status(200).json(results.rows);
     });
 });
 
-router.post('/', (req, res, next) => {
-    //Body parser gives access to the body parameter
-    const product = {
-        name: req.body.name,
-        price: req.body.price
-    }
-    //Handle error if name or price is left blank
-    if(!product.name || !product.price) {
-        res.status(404).json({
-            message: 'Invalid data submitted'
-        })
-    } else {
-        res.status(201).json({
-            message: 'Handling POST requests to /products',
-            //Verifies that the product was created
-            createdProduct: product
-        });
-    }
-});
-
-router.get('/:productId', (req, res, next) => {
-    const id = req.params.productId;
-    if (id === 'special') {
-        res.status(200).json({
-            message: 'You discovered the special ID',
-            id: id
-        });
-    } else {
-        res.status(200).json({
-            message: 'You passed an ID',
-            id: id
-        })
-    }
-});
 
 router.patch('/:productId', (req, res, next) => {
     res.status(200).json({
@@ -48,11 +44,17 @@ router.patch('/:productId', (req, res, next) => {
     });
 });
 
-router.delete('/:productId', (req, res, next) => {
-    const id = req.params.productId;
-    res.status(200).json({
-        message: `Deleted product (id: ${id})`
-    })
+router.delete('/:productId', (req, res) => {
+    const productId = req.params.productId;
+    pool.query('DELETE FROM products WHERE id = $1', 
+            [productId], 
+            (error, results) => {
+        if(error) {
+            res.send(error.message);
+        }
+        res.status(204).json(results.rows);
+        console.log('Product successfully deleted!');
+    });
 });
 
 module.exports = router;

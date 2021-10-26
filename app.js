@@ -4,12 +4,14 @@ const app = express();
 const morgan = require('morgan');
 //Importing body parsing middleware
 const bodyParser = require('body-parser');
+const db = require('./db');
 
 
 //Routers for API
 const productsRouter = require('./api/routes/products');
 const ordersRouter = require('./api/routes/orders');
-const userRouter = require('./api/routes/signup');
+const userRouter = require('./api/routes/user');
+const signupRouter = require('./api/routes/signup');
 //importing pool so we can CRUD DB data
 const pool = require('./db');
 
@@ -44,7 +46,7 @@ app.use((req, res, next) => {
 //Mounting the routers
 app.use('/products', productsRouter);
 app.use('/orders', ordersRouter);
-app.use('/user', userRouter);
+app.use('/user', userRouter, signupRouter);
 
 
 //ERROR HANDLING

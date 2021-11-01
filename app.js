@@ -8,10 +8,13 @@ const db = require('./db');
 
 
 //Routers for API
+const homeRouter = require('./api/routes/home');
 const productsRouter = require('./api/routes/products');
 const ordersRouter = require('./api/routes/orders');
-const userRouter = require('./api/routes/user');
+const usersRouter = require('./api/routes/users');
 const signupRouter = require('./api/routes/signup');
+const loginRouter = require('./api/routes/login/login');
+const authRouter = require('./api/routes/login/auth');
 //importing pool so we can CRUD DB data
 const pool = require('./db');
 
@@ -44,9 +47,13 @@ app.use((req, res, next) => {
 
 //ROUTERS
 //Mounting the routers
+app.use('/', homeRouter);
 app.use('/products', productsRouter);
 app.use('/orders', ordersRouter);
-app.use('/user', userRouter, signupRouter);
+app.use('/users', usersRouter);
+app.use('/signup', signupRouter);
+app.use('/login', loginRouter);
+app.use('/auth', authRouter);
 
 
 //ERROR HANDLING

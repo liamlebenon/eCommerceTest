@@ -56,6 +56,8 @@ app.use('/login', loginRouter);
 app.use('/auth', authRouter);
 
 
+
+
 //ERROR HANDLING
 //Can handle errors by catching all requests passing the 2 middlewares
 app.use((req, res, next) => {

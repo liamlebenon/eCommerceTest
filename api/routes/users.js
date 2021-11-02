@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
 const { pool, query } = require('../../db');
 
 // router.post('/signup', (req, res, next) => {

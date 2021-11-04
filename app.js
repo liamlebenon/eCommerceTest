@@ -5,7 +5,13 @@ const morgan = require('morgan');
 //Importing body parsing middleware
 const bodyParser = require('body-parser');
 const db = require('./db');
+const session = require('express-session');
 
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}));
 
 //Routers for API
 const homeRouter = require('./api/routes/home');
@@ -17,7 +23,6 @@ const loginRouter = require('./api/routes/login/login');
 const authRouter = require('./api/routes/login/auth');
 //importing pool so we can CRUD DB data
 const pool = require('./db');
-
 
 //LOGGING AND PARSING
 //Using morgan to log data
@@ -54,8 +59,6 @@ app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
 app.use('/auth', authRouter);
-
-
 
 
 //ERROR HANDLING

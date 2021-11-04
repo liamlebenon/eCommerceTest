@@ -1,7 +1,9 @@
 //import necessary requirements for accessing DB
 const express = require('express');
+const { request } = require('../../../app');
 const { pool, query } = require('../../../db');
 const router = express.Router();
+
 
 let username;
 let password;
@@ -12,17 +14,21 @@ router.get('/', (req, res) => {
 
 //Takes the user input data from /login and uses it to select  the right user from the DB by matching the username and password
 router.post('/', (req, res) => {
-    username = req.body.username;
-    password = req.body.password;
+    const username = req.body.username;
+    const password = req.body.password;
     if (username && password) {
         pool.query('SELECT * FROM users WHERE username = $1 AND password = $2',
             [username, password],
             (error, results, fields) => {
-                if (results)  {
-                    res.send(`Logged in successfully as ${username} and ${password}`);
+                if(error) {
+                    res.send(error.message);
+                }
+                if (results) {
+                    console.log(`User logged in as ${username}`);
+                    res.redirect(`/users/${username}`);                    
                 } else {
                     res.send('Incorrect username and/or password');
-                    console.log(results);
+
                 };
             });
     } else {

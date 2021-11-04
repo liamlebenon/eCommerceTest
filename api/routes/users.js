@@ -37,6 +37,18 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/:username', (req, res) => {
+    const username = req.params.username;
+    pool.query('SELECT * FROM users WHERE username = $1',
+        [username],
+        (error, results) => {
+            if(error) {
+                res.send(error.message);
+            }
+            res.status(200).json(results.rows)
+        })
+})
+
 
 router.post('/', (req, res) => {
     const { name, surname, username, password, email } = req.body;

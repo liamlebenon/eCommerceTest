@@ -21,7 +21,8 @@ router.post('/', async (req, res, next) => {
             if(error) {
                 res.send(error.message);
             } else {
-                res.status(201).write(`User ${username} was created!`);
+                res.status(201).redirect('/login');
+                console.log(`User ${username} was created`)
                 res.end();
             };
         });  

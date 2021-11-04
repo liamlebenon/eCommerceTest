@@ -37,17 +37,23 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/:username', (req, res) => {
-    const username = req.params.username;
-    pool.query('SELECT * FROM users WHERE username = $1',
-        [username],
+router.get('/dashboard', (req, res) => {
+    res.send('works!')
+});
+
+router.get('/:userId', (req, res) => {
+    const userId = req.params.userId;
+    pool.query('SELECT * FROM users WHERE id = $1',
+        [userId],
         (error, results) => {
             if(error) {
                 res.send(error.message);
             }
             res.status(200).json(results.rows)
         })
-})
+});
+
+
 
 
 router.post('/', (req, res) => {

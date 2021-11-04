@@ -6,12 +6,30 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const db = require('./db');
 const session = require('express-session');
+const flash = require('express-flash');
+const passport = require('passport');
+//importing the passport function from Passportconfig
+const initializePassport = require('./passportConfig');
+
+initializePassport(passport);
 
 app.use(session({
     secret: 'secret',
     resave: true,
     saveUninitialized: true
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(flash());
+
+//LOGGING AND PARSING
+//Using morgan to log data
+app.use(morgan('dev'));
+//Using body-parser to parse.  Will extract JSON data and make it more easily readable
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 //Routers for API
 const homeRouter = require('./api/routes/home');
@@ -24,12 +42,6 @@ const authRouter = require('./api/routes/login/auth');
 //importing pool so we can CRUD DB data
 const pool = require('./db');
 
-//LOGGING AND PARSING
-//Using morgan to log data
-app.use(morgan('dev'));
-//Using body-parser to parse.  Will extract JSON data and make it more easily readable
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 
 //HEADERS
@@ -59,7 +71,6 @@ app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
 app.use('/auth', authRouter);
-
 
 //ERROR HANDLING
 //Can handle errors by catching all requests passing the 2 middlewares
